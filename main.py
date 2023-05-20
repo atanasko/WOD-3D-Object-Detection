@@ -1,16 +1,25 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+import sys
+import argparse
+import utils.wod_reader as wod_reader
 
 
-# Press the green button in the gutter to run the script.
+def parse_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-d', '--dataset_dir')
+    parser.add_argument('-c', '--context_name')
+    args = parser.parse_args()
+
+    if args.dataset_dir is None or args.context_name is None:
+        parser.print_help()
+        sys.exit()
+
+    return args.dataset_dir, args.context_name
+
+
+def main():
+    dataset_dir, context_name = parse_arguments()
+
+
+# object detector entry point
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    main()
