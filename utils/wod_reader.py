@@ -18,3 +18,10 @@ def read_cam_img_cam_box_df(dataset_dir: str, context_name: str, camera_name: in
     cam_img_cam_box_df = v2.merge(cam_img_df, cam_box_df, right_group=True)
 
     return cam_img_cam_box_df
+
+
+def read_lidar_df(dataset_dir: str, context_name: str, lidar_name: int):
+    lidar_df = read_df(dataset_dir, context_name, 'lidar')
+    lidar_df = lidar_df[lidar_df['key.laser_name'] == lidar_name]
+
+    return lidar_df

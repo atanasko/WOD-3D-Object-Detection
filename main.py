@@ -28,10 +28,20 @@ def vis_cam_img(dataset_dir: str, context_name: str, camera_name: int):
         vis.vis_cam_img(cam_image, cam_box)
 
 
+def vis_range_image(dataset_dir: str, context_name: str, lidar_name: int):
+    lidar_df = wod_reader.read_lidar_df(dataset_dir, context_name, lidar_name)
+
+    for i, (_, r) in enumerate(lidar_df.iterrows()):
+        lidar = v2.LiDARComponent.from_dict(r)
+
+        vis.vis_range_image(lidar.range_image_return1)
+
+
 def main():
     dataset_dir, context_name = parse_arguments()
 
-    vis_cam_img(dataset_dir, context_name, 1)
+    # vis_cam_img(dataset_dir, context_name, 1)
+    vis_range_image(dataset_dir, context_name, 1)
 
 
 # object detector entry point
