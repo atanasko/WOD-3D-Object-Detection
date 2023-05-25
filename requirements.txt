@@ -1,0 +1,8 @@
+tensorflow
+dask
+pandas
+OpenEXR
+waymo-open-dataset-tf-2-11-0==1.5.1
+pillow
+matplotlib
+opencv-python
