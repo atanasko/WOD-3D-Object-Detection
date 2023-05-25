@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import numpy as np
 import cv2
+import open3d as o3d
 from PIL import Image
 
 colormap = {1: "red", 2: "blue", 3: "yellow", 4: "yellow"}
@@ -47,7 +48,7 @@ def vis_range_image(range_image):
 
     # map intensity to 255 values, and normalize to 99% - 1% max intensity to mitigate influence of outliers
     ri_intensity = np.amax(ri_intensity) * (0.99 - 0.01) * ri_intensity * 255 / (
-                np.amax(ri_intensity) - np.amin(ri_intensity))
+            np.amax(ri_intensity) - np.amin(ri_intensity))
 
     ri_range_intensity = np.vstack((ri_range, ri_intensity))
     ri_range_intensity = ri_range_intensity.astype(np.uint8)
@@ -57,3 +58,23 @@ def vis_range_image(range_image):
 
     cv2.imshow("Range image", ri_range_intensity)
     cv2.waitKey(0)
+
+
+def vis_pcl(points):
+    # pylint: disable=no-member (E1101)
+    vis = o3d.visualization.VisualizerWithKeyCallback()
+    vis.create_window()
+
+    opt = vis.get_render_option()
+    opt.background_color = np.asarray([0, 0, 0])
+
+    pcd = o3d.geometry.PointCloud()
+
+    mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1.6, origin=[0, 0, 0])
+
+    pcd.points = o3d.utility.Vector3dVector(points.numpy())
+
+    vis.add_geometry(pcd)
+    vis.add_geometry(mesh_frame)
+
+    vis.run()
