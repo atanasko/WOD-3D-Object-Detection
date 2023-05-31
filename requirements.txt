@@ -7,3 +7,4 @@ pillow
 matplotlib
 opencv-python
 open3d
+easydict

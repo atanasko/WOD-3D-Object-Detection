@@ -5,6 +5,7 @@ import numpy as np
 import cv2
 import open3d as o3d
 from PIL import Image
+import utils.config as config
 
 colormap = {1: "red", 2: "blue", 3: "yellow", 4: "yellow"}
 
@@ -78,3 +79,46 @@ def vis_pcl(points):
     vis.add_geometry(mesh_frame)
 
     vis.run()
+
+
+def vis_bev_image(bev_img, lidar_box):
+    cfg = config.load()
+
+    bev_img = cv2.rotate(bev_img, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    # bev_img = cv2.rotate(bev_img, cv2.ROTATE_90_CLOCKWISE)
+    # bev_img = cv2.rotate(bev_img, cv2.ROTATE_180)
+    img = Image.fromarray(bev_img).convert('RGB')
+
+    discrete = (cfg.range_x[1] - cfg.range_x[0]) / cfg.bev_width
+
+    ax = plt.subplot()
+    # Iterate over the individual labels.
+    for j, (object_id, object_type, x, size_x, y, size_y, yaw) in enumerate(zip(
+            lidar_box.key.laser_object_id, lidar_box.type, lidar_box.box.center.x, lidar_box.box.size.x,
+            lidar_box.box.center.y,
+            lidar_box.box.size.y, lidar_box.box.heading
+    )):
+        # Draw the object bounding box.
+        cos_yaw = np.cos(yaw)
+        sin_yaw = np.sin(yaw)
+
+        x = x / discrete
+        y = (-y / discrete) + cfg.bev_width / 2
+
+        size_x = size_x / discrete
+        size_y = size_y / discrete
+
+        size_x = size_x * cos_yaw + size_y * sin_yaw
+        size_y = - size_x * sin_yaw + size_y * cos_yaw
+
+        ax.add_patch(patches.Rectangle(
+            xy=(x - 0.5 * size_x,
+                y - 0.5 * size_y),
+            width=size_x,
+            height=size_y,
+            linewidth=1,
+            edgecolor=colormap[object_type],
+            facecolor='none'))
+
+    plt.imshow(img)
+    plt.show()
